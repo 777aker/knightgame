@@ -1,0 +1,3 @@
+cd telemetry
+make
+./telemetry

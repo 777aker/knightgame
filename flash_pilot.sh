@@ -1,4 +1,4 @@
 source ~/zephyrproject/.venv/bin/activate
 cd ..
-west build -b nucleo_h723zg knightgame/board1
+west build -p always -b nucleo_h723zg knightgame/pilot
 west flash
