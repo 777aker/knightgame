@@ -1,3 +1,4 @@
 source ~/zephyrproject/.venv/bin/activate
-west build -b nucleo_h723zg knightgame/
+cd ..
+west build -b nucleo_h723zg knightgame/board1
 west flash
