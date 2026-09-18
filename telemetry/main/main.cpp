@@ -1,5 +1,10 @@
 #include "../window/window.hpp"
 
+#include <sys/socket.h>
+#include <iostream>
+#include <arpa/inet.h>
+#include <unistd.h>
+
 /**
  * @brief respond to key pressed
  *
@@ -23,6 +28,43 @@ void key(GLFWwindow *windowobj, int key, [[maybe_unused]] int scancode, int acti
 	}
 }
 
+void get_packet()
+{
+	int socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
+	if (socket_fd < 0) {
+		std::cerr << "Failed to open socket\n";
+		return;
+	}
+
+	sockaddr_in server_address{};
+	server_address.sin_family = AF_INET;
+	server_address.sin_port = htons(7742);
+	server_address.sin_addr.s_addr = INADDR_ANY;
+
+	if (bind(socket_fd, (struct sockaddr *)&server_address, sizeof(server_address)) < 0) {
+		std::cerr << "Bind failed\n";
+		close(socket_fd);
+		return;
+	}
+
+	char buffer[1024];
+	sockaddr_in client_address{};
+	socklen_t client_len = sizeof(client_address);
+
+	std::cout << "Waiting for bytes\n";
+	ssize_t bytes_received = recvfrom(socket_fd, buffer, sizeof(buffer) - 1, 0,
+					  (struct sockaddr *)&client_address, &client_len);
+	if (bytes_received < 0) {
+		std::cerr << "Error receiving data\n";
+		close(socket_fd);
+		return;
+	}
+
+	buffer[bytes_received] = '\0';
+	std::cout << "Packet data: " << buffer << "\n";
+	close(socket_fd);
+}
+
 /**
  * @brief main display loop
  *
@@ -37,6 +79,8 @@ void display_loop(Window *windowobj)
 		glColor3ub(nephritis.r, nephritis.g, nephritis.b);
 		glRasterPos2i(-dim * asp + 0.05 * dim, dim - 0.05 * dim);
 		Print("FPS=%d", windowobj->FramesPerSecond());
+
+		get_packet();
 
 		// check for display errors
 		int err = glGetError();
