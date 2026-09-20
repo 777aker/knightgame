@@ -1,12 +1,12 @@
 / {
     zephyr,user {
-        io-channels = <&adc1 5>;
+        io-channels = <&adc1 15>, <&adc1 10>, <&adc1 13>, <&adc1 5>;
     };
 };
 
 &adc1 {
     status = "okay";
-    pinctrl-0 = <&adc1_inp5_pb1>;
+    pinctrl-0 = <&adc1_inp15_pa3 &adc1_inp10_pc0 &adc3_inp1_pc3_c &adc1_inp5_pb1>;
     pinctrl-names = "default";
 
     compatible = "st,stm32-adc";
@@ -15,6 +15,30 @@
 
     #address-cells = <1>;
     #size-cells = <0>;
+
+    channel@f {
+        reg = <15>;
+        zephyr,gain = "ADC_GAIN_1";
+        zephyr,reference = "ADC_REF_INTERNAL";
+        zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+        zephyr,resolution = <12>;
+    };
+
+    channel@a {
+        reg = <10>;
+        zephyr,gain = "ADC_GAIN_1";
+        zephyr,reference = "ADC_REF_INTERNAL";
+        zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+        zephyr,resolution = <12>;
+    };
+
+    channel@d {
+        reg = <13>;
+        zephyr,gain = "ADC_GAIN_1";
+        zephyr,reference = "ADC_REF_INTERNAL";
+        zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+        zephyr,resolution = <12>;
+    };
 
     channel@5 {
         reg = <5>;
